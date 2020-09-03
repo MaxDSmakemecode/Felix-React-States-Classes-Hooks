@@ -1,26 +1,59 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react"
+import PersonDetails from "./PersonDetails"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  constructor() {
+    super()
+
+    this.state = {
+      id: 2,
+      users: [],
+    }
+  }
+
+  handleClick({ id }) {
+    this.setState({
+      id,
+    })
+  }
+
+  // handleClick(user) {
+  //   const id = user.id
+  //   this.setState({
+  //     id,
+  //   })
+  // }
+
+  componentDidMount() {
+    fetch("https://api.github.com/users")
+      .then((response) => response.json())
+      .then((result) => {
+        this.setState({ users: result, id: result[0].id })
+      })
+  }
+
+  render() {
+    console.log("thi>>>>", this.state)
+
+    const foundUser =
+      this.state.users.find((user) => user.id === this.state.id) || {}
+
+    const { login, repos_url, followers_url } = foundUser
+
+    return (
+      <div>
+        {this.state.users.map((user) => {
+          console.log("user", user)
+          return <div onClick={() => this.handleClick(user)}>{user.login}</div>
+        })}
+        <PersonDetails
+          headline={login}
+          description={repos_url}
+          age={followers_url}
+        />
+      </div>
+    )
+  }
 }
 
-export default App;
+export default App
