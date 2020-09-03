@@ -1,59 +1,43 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import PersonDetails from "./PersonDetails"
 
-class App extends React.Component {
-  constructor() {
-    super()
+function App() {
+  const [id, setId] = useState(2)
+  const [users, setUsers] = useState([])
 
-    this.state = {
-      id: 2,
-      users: [],
-    }
+  function handleClick({ id }) {
+    setId(id)
   }
 
-  handleClick({ id }) {
-    this.setState({
-      id,
-    })
-  }
-
-  // handleClick(user) {
-  //   const id = user.id
-  //   this.setState({
-  //     id,
-  //   })
-  // }
-
-  componentDidMount() {
+  useEffect(() => {
     fetch("https://api.github.com/users")
       .then((response) => response.json())
       .then((result) => {
-        this.setState({ users: result, id: result[0].id })
+        setId(result[0].id)
+        setUsers(result)
       })
-  }
+  }, [])
 
-  render() {
-    console.log("thi>>>>", this.state)
+  const foundUser = users.find((user) => user.id === id) || {}
 
-    const foundUser =
-      this.state.users.find((user) => user.id === this.state.id) || {}
+  const { login, repos_url, followers_url } = foundUser
 
-    const { login, repos_url, followers_url } = foundUser
-
-    return (
-      <div>
-        {this.state.users.map((user) => {
-          console.log("user", user)
-          return <div onClick={() => this.handleClick(user)}>{user.login}</div>
-        })}
-        <PersonDetails
-          headline={login}
-          description={repos_url}
-          age={followers_url}
-        />
-      </div>
-    )
-  }
+  return (
+    <div>
+      {users.map((user, i) => {
+        return (
+          <div key={i} onClick={() => handleClick(user)}>
+            {user.login}
+          </div>
+        )
+      })}
+      <PersonDetails
+        headline={login}
+        description={repos_url}
+        age={followers_url}
+      />
+    </div>
+  )
 }
 
 export default App
