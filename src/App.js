@@ -48,17 +48,20 @@ class App extends React.Component {
     
     const { login, repos_url, followers_url } = foundUser
     /* 
-    above code on the left side of the equal sign is destructured from 
-    'const login, repos_url, followers_url' 
-    but the problem with that would be that you won't be able to write the objects like in PersonDetails component below => react will throw an error 
+    above code on the left side of the equal sign is destructured. 
+    it looks up 'login', 'repos_url' and 'followers_url' inside the 'users' array
+    below code in the return statement is only possible because of desctructuring => if written normally below code would throw an error
     */
 
     return (
       <div>
         {this.state.users.map((user) => {
+          // 1. here every user gets mapped directly into the div
           // console.log("user", user)
+          // 2. then the handleClick function gets applied as an event listener 'onClick' to every single element with the content of 'user.login'
           return <div onClick={() => this.handleClick(user)}>{user.login}</div>
         })}
+        {/* here the PersonDetails from the external file gets mapped and set in the DOM, so when an 'user.login' is clicked it will show it's details as written below */}
         <PersonDetails
           headline={login}
           description={repos_url}
